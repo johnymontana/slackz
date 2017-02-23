@@ -22,7 +22,11 @@ channel_ids = [ch['id'] for ch in c['channels']]
 
 def getMessages(channel_id, latest=None, count=1000):
     r = slack.channels.history(channel=channel_id, latest=latest, count=count)
-    latest_ts = r.body['messages'][-1]['ts']
+    if r.body and r.body['messages']:
+        latest_ts = r.body['messages'][-1]['ts']
+    else:
+        print(r.body)
+        return
     with open('data/' + channel_id + '_' + str(latest_ts) +'.json', 'w') as f:
         json.dump(r.body, f)
         print("Saving file: " + channel_id + '_' + str(latest_ts))
